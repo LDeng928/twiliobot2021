@@ -26,9 +26,14 @@ module.exports = class ShwarmaOrder extends Order{
                 aReturn.push("What size would you like?");
                 break;
             case OrderState.SIZE:
-                this.stateCur = OrderState.TOPPINGS
-                this.sSize = sInput;
-                aReturn.push("What toppings would you like?");
+              //Error handling. Make sure customers only enter large or small.                
+                if(sInput.toLowerCase() == "small" || sInput.toLowerCase() == "large"){
+                  this.stateCur = OrderState.TOPPINGS
+                  this.sSize = sInput;
+                  aReturn.push("What toppings would you like?");
+                } else {
+                  aReturn.push("Please enter LARGE or SMALL.")
+                };                              
                 break;
             case OrderState.TOPPINGS:
                 this.stateCur = OrderState.DRINKS
