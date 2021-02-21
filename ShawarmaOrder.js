@@ -16,6 +16,7 @@ module.exports = class ShwarmaOrder extends Order{
         this.sToppings = "";
         this.sDrinks = "";
         this.sItem = "shawarama";
+        this.nPrice = 0;
     }
     handleInput(sInput){
         let aReturn = [];
@@ -30,6 +31,11 @@ module.exports = class ShwarmaOrder extends Order{
                 if(sInput.toLowerCase() == "small" || sInput.toLowerCase() == "large"){
                   this.stateCur = OrderState.TOPPINGS
                   this.sSize = sInput;
+                  if(sInput.toLowerCase() == "small") {
+                    this.nPrice += 5;
+                  } else if(sInput.toLowerCase() == "large") {
+                    this.nPrice += 10;
+                  }
                   aReturn.push("What toppings would you like?");
                 } else {
                   aReturn.push("Please enter LARGE or SMALL.")
@@ -38,13 +44,16 @@ module.exports = class ShwarmaOrder extends Order{
             case OrderState.TOPPINGS:
                 this.stateCur = OrderState.DRINKS
                 this.sToppings = sInput;
+                this.nPrice += 20;
                 aReturn.push("Would you like drinks with that?");
                 break;
             case OrderState.DRINKS:
                 this.stateCur = OrderState.PAYMENT;
-                this.nOrder = 15;
+                this.nPrice += 2;
+                //Handle the answer no for drinks
                 if(sInput.toLowerCase() != "no"){
                     this.sDrinks = sInput;
+                    this.nPrice += 0;
                 }
                 aReturn.push("Thank-you for your order of");
                 aReturn.push(`${this.sSize} ${this.sItem} with ${this.sToppings}`);
@@ -79,7 +88,7 @@ module.exports = class ShwarmaOrder extends Order{
         <script
           src="https://www.paypal.com/sdk/js?client-id=${sClientID}"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
         </script>
-        Thank you ${this.sNumber} for your order of $${this.nOrder}.
+        Thank you ${this.sNumber} for your order of $${this.nPrice}.
         <div id="paypal-button-container"></div>
   
         <script>
@@ -89,7 +98,7 @@ module.exports = class ShwarmaOrder extends Order{
                 return actions.order.create({
                   purchase_units: [{
                     amount: {
-                      value: '${this.nOrder}'
+                      value: '${this.nPrice}'
                     }
                   }]
                 });
