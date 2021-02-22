@@ -1,3 +1,4 @@
+const { json } = require("express");
 const Order = require("./Order");
 
 const OrderState = Object.freeze({
@@ -20,6 +21,9 @@ module.exports = class ShwarmaOrder extends Order{
     }
     handleInput(sInput){
         let aReturn = [];
+        //fetch and stringify JSON data
+        let address = JSON.parse(JSON.stringify(sInput)).purchase_units[0].shipping;
+        
         switch(this.stateCur){
             case OrderState.WELCOMING:
                 this.stateCur = OrderState.SIZE;
@@ -67,7 +71,7 @@ module.exports = class ShwarmaOrder extends Order{
                 this.isDone(true);
                 let d = new Date(); 
                 d.setMinutes(d.getMinutes() + 20);
-                aReturn.push(`Your order will be delivered at ${d.toTimeString()}`);
+                aReturn.push(`Your order will be delivered at ${d.toTimeString()} to ${address}`);
                 break;
         }
         return aReturn;
@@ -107,7 +111,7 @@ module.exports = class ShwarmaOrder extends Order{
                 // This function captures the funds from the transaction.
                 return actions.order.capture().then(function(details) {
                   // This function shows a transaction success message to your buyer.
-                  $.post(".",()=>{
+                  $.post(".", details, ()=>{
                     window.open("", "_self");
                     window.close(); 
                   });

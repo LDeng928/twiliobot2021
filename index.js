@@ -25,8 +25,17 @@ let oOrders = {};
 app.post("/payment/:phone", (req, res) => {
   // this happens when the order is complete
   sFrom = req.params.phone;
-  const aReply = oOrders[sFrom].handleInput("thank you for your order ... notification");
+  const aReply = oOrders[sFrom].handleInput(req.body);
   const oSocket = oSockets[sFrom];
+  //get the address from the req body
+  address = req.body.address
+  //Call paypal to get the transaction details
+  // details = http.get(PAYPAL_ORDER_API + address. {
+  //   headers: {
+  //     Accept: `application/json`,
+  //     Authorization: `Bearer ${ auth.access_token}`
+  //   }
+  // });
   // send messages out of turn
   for (let n = 0; n < aReply.length; n++) {
     if (oSocket) {
